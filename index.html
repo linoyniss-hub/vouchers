@@ -65,6 +65,25 @@
       if (!coupon.dueDate) return false;
       return new Date(coupon.dueDate) - new Date() < 0;
     }
+	function handleShareWhatsApp(coupon) {
+
+  const dueDate = coupon.dueDate
+    ? new Date(coupon.dueDate).toLocaleDateString("en-GB")
+    : "-";
+
+  const text =
+`🎟 Coupon
+${coupon.name}
+
+📅 Due: ${dueDate}
+${coupon.code ? "🔑 Code: " + coupon.code : ""}
+
+Shared from Nachman's Coupons`;
+
+  const url = "https://wa.me/?text=" + encodeURIComponent(text);
+
+  window.open(url, "_blank");
+}
 
     function App() {
       const [coupons, setCoupons] = React.useState(loadCoupons());
@@ -356,7 +375,13 @@ filteredCoupons.length === 0
               ),
               React.createElement(DialogActions,{style:{padding:"8px 16px 16px"}},
                 React.createElement(Button,{onClick:closeDetails, color:"primary"},"Close")
-              )
+              ),
+				React.createElement(Button,{
+  variant:"contained",
+  style:{background:"#25D366", color:"white"},
+  onClick:()=>handleShareWhatsApp(selectedCoupon)
+},
+"Share to WhatsApp")					   
             )})()
           ),
 
