@@ -161,51 +161,81 @@ if (sortBy === "relevant") {
       return React.createElement(Container, { maxWidth: "lg", style: { padding: "32px 16px" } },
         React.createElement(Paper, { elevation: 3, style: { padding: 24 } },
 
-         /* TOP BUTTONS */
-React.createElement(Box, { style: { display: "flex", alignItems: "center", gap: "12px", marginBottom: 16 } },
-  React.createElement("img", { src: "icons/1773329525333-512.png", alt: "Logo", style: { height: 28} }),
-  React.createElement(Typography, { variant: "h5", gutterBottom: true, style: { fontWeight: 600 } }, "Coupon Keeper")
-),
-  
-React.createElement(Grid, { container: true, spacing: 2, alignItems: "center", style: { marginBottom: 16 } },
-  // Search field
-  React.createElement(Grid, { item: true, xs: 12, sm: 7 }, // takes more space on small+ screens
-    React.createElement(TextField, {
-      label: "Search by name or code",
-      value: search,
-      onChange: e => setSearch(e.target.value),
-      fullWidth: true
-    })
-  ),
-  // Sort field
-  React.createElement(Grid, { item: true, xs: 12, sm: 5 }, // takes the rest of the row
-    React.createElement(TextField, {
-      select: true,
-      SelectProps: { native: true },
-      label: "Sort by",
-      value: sortBy,
-      onChange: e => setSortBy(e.target.value),
-      variant: "outlined",
-      size: "small",
-      fullWidth: true
-    },
-      React.createElement("option", { value: "none" }, "None"),
-      React.createElement("option", { value: "name" }, "Name"),
-      React.createElement("option", { value: "dueDate" }, "Due date (closest first)"),
-	  React.createElement("option", { value: "relevant" }, "By relevant")
+         /* TOP BANNER + CONTROLS */
+React.createElement(Box, { style: { width: "100%", marginBottom: 24 } },
 
-    )
+  // Banner with image and title
+  React.createElement(Box, { style: { position: "relative", width: "100%", height: 150, marginBottom: 16 } },
+    React.createElement("img", {
+      src: "icons/1773329525333-512.png",
+      alt: "Banner",
+      style: { width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }
+    }),
+    React.createElement(Typography, {
+      variant: "h3",
+      style: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        color: "white",
+        fontWeight: 600,
+        textShadow: "2px 2px 4px rgba(0,0,0,0.5)"
+      }
+    }, "Coupon Keeper")
   ),
-  React.createElement(Grid, { item: true, xs:12, sm:5, style: { textAlign: "left", display: "flex", gap: "8px", alignItems: "center" } },
-    React.createElement(Button, { size: "small", variant: "outlined", color: "primary", onClick: handleExport,
-      startIcon: React.createElement("span", { className: "material-icons-outlined" }, "download")
-    }, "Download"),
-    React.createElement(Button, { size: "small", variant: "outlined", color: "primary", onClick: handleImport,
-      startIcon: React.createElement("span", { className: "material-icons-outlined" }, "upload_file")
-    }, "Import")
+
+  // Controls: Search + Sort + Import/Export buttons
+  React.createElement(Grid, { container: true, spacing: 2, alignItems: "center" },
+    
+    // Search field
+    React.createElement(Grid, { item: true, xs: 12, sm: 5 },
+      React.createElement(TextField, {
+        label: "Search by name or code",
+        value: search,
+        onChange: e => setSearch(e.target.value),
+        fullWidth: true
+      })
+    ),
+
+    // Sort field
+    React.createElement(Grid, { item: true, xs: 12, sm: 4 },
+      React.createElement(TextField, {
+        select: true,
+        SelectProps: { native: true },
+        label: "Sort by",
+        value: sortBy,
+        onChange: e => setSortBy(e.target.value),
+        variant: "outlined",
+        size: "small",
+        fullWidth: true
+      },
+        React.createElement("option", { value: "none" }, "None"),
+        React.createElement("option", { value: "name" }, "Name"),
+        React.createElement("option", { value: "dueDate" }, "Due date (closest first)"),
+        React.createElement("option", { value: "relevant" }, "By relevant")
+      )
+    ),
+
+    // Import/Export buttons
+    React.createElement(Grid, { item: true, xs: 12, sm: 3, style: { display: "flex", gap: 8 } },
+      React.createElement(Button, {
+        size: "small",
+        variant: "outlined",
+        color: "primary",
+        onClick: handleExport,
+        startIcon: React.createElement("span", { className: "material-icons-outlined" }, "download")
+      }, "Download"),
+      React.createElement(Button, {
+        size: "small",
+        variant: "outlined",
+        color: "primary",
+        onClick: handleImport,
+        startIcon: React.createElement("span", { className: "material-icons-outlined" }, "upload_file")
+      }, "Import")
+    )
   )
 ),
-  
 
           /* LIST */
           filteredCoupons.length === 0
