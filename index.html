@@ -152,13 +152,11 @@ if (sortBy === "dueDate") {
 
 // NEW: relevant sorting (soonest due first, remove used & expired)
 if (sortBy === "relevant") {
-  filteredCoupons = filteredCoupons.filter(c => !c.used && !isExpired(c)); // remove used & expired
-  filteredCoupons.sort((a, b) => {
-    if(!a.dueDate && !b.dueDate) return 0;
-    if(!a.dueDate) return 1;
-    if(!b.dueDate) return -1;
-    return new Date(a.dueDate) - new Date(b.dueDate); // soonest first
-  });
+  // Keep only not used AND due date exists (so we can sort)
+  filteredCoupons = filteredCoupons.filter(c => !c.used && c.dueDate);
+
+  // Sort by due date, soonest first
+  filteredCoupons.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 }
       return React.createElement(Container, { maxWidth: "lg", style: { padding: "32px 16px" } },
         React.createElement(Paper, { elevation: 3, style: { padding: 24 } },
