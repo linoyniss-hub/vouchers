@@ -105,7 +105,7 @@ Shared from Nachman's Coupons`;
         if (!name.trim() || !code.trim()||!dueDate.trim()){
 			alert("Name, Code and Due date are required!);
 				  return;
-		}
+		};
         const newCoupon = {
           id: Date.now(), name: name.trim(), code: code.trim(),
           orderedBy: orderedBy.trim(), dueDate, description: description.trim(),
