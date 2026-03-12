@@ -41,12 +41,7 @@
 
     const STORAGE_KEY = "couponManagerDataReact_v4";
     const THEME_KEY = "couponManagerThemeMode";
-    // inside your App component
-const theme = MaterialUI.useTheme(); // get current theme
 
-const UNUSED_GRAY = theme.palette.type === "dark" 
-    ? "rgba(200,200,200,0.7)"  // lighter gray for dark mode
-    : "rgb(133,133,133)";       // default gray for light mode
 
     function loadCoupons() {
       try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
@@ -105,6 +100,13 @@ Shared from Nachman's Coupons`;
       const [dueDate, setDueDate] = React.useState("");
       const [description, setDescription] = React.useState("");
 		const [editingCouponId, setEditingCouponId] = React.useState(null);
+
+		    // inside your App component
+const theme = MaterialUI.useTheme(); // get current theme
+
+const UNUSED_GRAY = theme.palette.type === "dark" 
+    ? "rgba(200,200,200,0.7)"  // lighter gray for dark mode
+    : "rgb(133,133,133)";       // default gray for light mode
 
       React.useEffect(() => saveCoupons(coupons), [coupons]);
 
