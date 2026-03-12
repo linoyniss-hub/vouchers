@@ -1,7 +1,7 @@
 {
   "name": "Nachman Coupons",
   "short_name": "Coupons",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#277DA1",
