@@ -361,19 +361,7 @@ filteredCoupons.length === 0
   )
 ),
 
-                /* RIGHT COLUMN (TEXT) */
-                React.createElement("div",{style:{textAlign:"right"}},
-                  React.createElement(Typography,{
-                    variant:"subtitle1",
-                    style:{fontWeight:600}
-                  },coupon.name),
-
-                  React.createElement(Typography,{variant:"body2"},
-                    coupon.dueDate
-                      ? new Date(coupon.dueDate).toLocaleDateString("en-GB")
-                      : "-"
-                  )
-                )
+                
 
               )
 
