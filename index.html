@@ -261,62 +261,46 @@ filteredCoupons.length === 0
                 }
               },
 
-                
+                /* LEFT COLUMN (BUTTONS ONLY) */
+                React.createElement("div",{
+                  style:{
+                    display:"flex",
+                    gap:"4px"
+                  }
+                },
 
-                  status.icon
-                    ? React.createElement("span",{
-                        className:"material-icons-outlined",
-                        style:{color:status.iconColor}
-                      },status.icon)
-                    : null,
+                  !coupon.used
+                    ? React.createElement(IconButton,{
+                        style:{color:UNUSED_GRAY},
+                        onClick:e=>handleMarkUsed(coupon.id,e)
+                      },
+                        React.createElement("span",{className:"material-icons-outlined"},"check_circle_outline")
+                      )
+                    : React.createElement(IconButton,{
+                        style:{color:"#177818"},
+                        onClick:e=>handleMarkUnused(coupon.id,e)
+                      },
+                        React.createElement("span",{className:"material-icons-outlined"},"check_circle")
+                      ),
 
-                  React.createElement("div",{
-                    style:{
-                      display:"flex",
-                      gap:"4px"
-                    }
+                  React.createElement(IconButton,{
+                    style:{color:UNUSED_GRAY},
+                    onClick:e=>handleDelete(coupon.id,e)
                   },
-
-                    !coupon.used
-                      ? React.createElement(IconButton,{
-                          style:{color:UNUSED_GRAY},
-                          onClick:e=>handleMarkUsed(coupon.id,e)
-                        },
-                          React.createElement("span",{className:"material-icons-outlined"},"check_circle_outline")
-                        )
-                      : React.createElement(IconButton,{
-                          style:{color:"#177818"},
-                          onClick:e=>handleMarkUnused(coupon.id,e)
-                        },
-                          React.createElement("span",{className:"material-icons-outlined"},"check_circle")
-                        ),
-
-                    React.createElement(IconButton,{
-                      style:{color:UNUSED_GRAY},
-                      onClick:e=>handleDelete(coupon.id,e)
-                    },
-                      React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
-                    )
-
+                    React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
                   )
 
                 ),
 
                 /* RIGHT COLUMN (TEXT) */
-                React.createElement("div",{
-                  style:{
-                    textAlign:"right"
-                  }
-                },
+                React.createElement("div",{style:{textAlign:"right"}},
 
                   React.createElement(Typography,{
                     variant:"subtitle1",
                     style:{fontWeight:600}
                   },coupon.name),
 
-                  React.createElement(Typography,{
-                    variant:"body2"
-                  },
+                  React.createElement(Typography,{variant:"body2"},
                     coupon.dueDate
                       ? new Date(coupon.dueDate).toLocaleDateString("en-GB")
                       : "-"
