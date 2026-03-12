@@ -345,41 +345,59 @@ React.createElement(Dialog, {
   PaperProps: { style: { borderRadius: 20 } }
 },
   selectedCoupon && React.createElement(Box, null,
-    // --- Header with title and buttons ---
+
+    // --- Colored Header with Coupon Name ---
     React.createElement(Box, {
       style: {
         background: getStatus(selectedCoupon).bg || "rgba(113, 162, 182, 0.5)",
         padding: "20px 24px",
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        borderBottom: "1px solid rgba(0,0,0,0.12)",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
+        borderBottom: "1px solid rgba(0,0,0,0.12)"
       }
     },
       React.createElement(Typography, { variant: "h6", color: "textSecondary", style: { fontWeight: 600 } }, selectedCoupon.name),
-      React.createElement("div", { style: { display: "flex", gap: "8px" } },
-        // Close button
-        React.createElement(IconButton, { onClick: closeDetails },
-          React.createElement("span", { className: "material-icons-outlined" }, "close")
-        ),
-        // WhatsApp SHARE button
-        React.createElement(Button, {
-          variant: "outlined",
-          style: {
-            color: "#25D366",
-            borderColor: "#25D366",
-            textTransform: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: 4
-          },
-          onClick: () => handleShareWhatsApp(selectedCoupon)
-        },
-          React.createElement("img", { src: "icons/whatsapp.png", style: { width: 20, height: 20 } }),
-          "SHARE"
-        )
+      React.createElement(Typography, { variant: "body2", color: "textSecondary", style: { fontWeight: 500 } }, "Coupon Details")
+    ),
+
+    // --- Buttons Container on top-right (outside header) ---
+    React.createElement(Box, {
+      style: {
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: "8px",
+        marginTop: 12,
+        marginRight: 16
+      }
+    },
+      // Close button as text
+      React.createElement(Button, {
+        variant: "outlined",
+        onClick: closeDetails,
+        style: {
+          textTransform: "none"
+        }
+      }, "CLOSE"),
+
+      // WhatsApp Share button
+      React.createElement(Button, {
+        variant: "outlined",
+        onClick: () => handleShareWhatsApp(selectedCoupon),
+        style: {
+          textTransform: "none",
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          borderColor: "#25D366",
+          color: "#25D366"
+        }
+      },
+        // Use your SVG icon directly, colored green
+        React.createElement("img", {
+          src: "icons/whatsapp-svgrepo-com.svg",
+          style: { width: 20, height: 20, filter: "invert(38%) sepia(85%) saturate(534%) hue-rotate(88deg) brightness(95%) contrast(95%)" }
+        }),
+        "SHARE"
       )
     ),
 
