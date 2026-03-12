@@ -316,7 +316,7 @@ filteredCoupons.length === 0
                    display:"flex",
                   justifyContent:"space-between",
                   alignItems:"center",  // <-- vertical center
-                  padding: "0 8px"     // <-- symmetric left/right padding
+                  padding: "0 0px"     // <-- symmetric left/right padding
                 }
               },
 
@@ -334,7 +334,7 @@ filteredCoupons.length === 0
                     style:{color:"rgb(163 15 26)", padding:4},
                     onClick:e=>handleDelete(coupon.id,e)
                   },
-                    React.createElement("span",{className:"material-icons-outlined", style:{fontSize:30}},"delete_outline")
+                    React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"delete_outline")
                   ),
 
                   // Mark Used / Unused
@@ -343,13 +343,13 @@ filteredCoupons.length === 0
                         style:{color:UNUSED_GRAY, padding:4},
                         onClick:e=>handleMarkUsed(coupon.id,e)
                       },
-                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:30}},"check_circle_outline")
+                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"check_circle_outline")
                       )
                     : React.createElement(IconButton,{
                         style:{color:"rgb(16 94 17)", padding:4},
                         onClick:e=>handleMarkUnused(coupon.id,e)
                       },
-                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:30}},"check_circle")
+                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"check_circle")
                       ),
 
                   // Edit
@@ -357,7 +357,7 @@ filteredCoupons.length === 0
                     style: { color: UNUSED_GRAY, padding:4 },
                     onClick: e => handleEdit(coupon, e)
                   },
-                    React.createElement("span", { className: "material-icons-outlined", style:{fontSize:30} }, "edit")
+                    React.createElement("span", { className: "material-icons-outlined", style:{fontSize:25} }, "edit")
                   )
                 ),
 
