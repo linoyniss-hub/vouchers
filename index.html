@@ -371,10 +371,18 @@ filteredCoupons.length === 0
                   )
                 )
               ),
-              React.createElement(DialogActions,{style:{padding:"8px 16px 16px"}},
-                React.createElement(Button,{onClick:closeDetails, color:"primary"},"Close")
-              ),
-				React.createElement(Button, {
+              // --- Buttons container on right ---
+  React.createElement("div", {
+    style: { display: "flex", gap: "8px" } // <--- makes buttons appear next to each other
+  },
+
+    // Close button
+    React.createElement(IconButton, { onClick: closePopup },
+      React.createElement("span", { className: "material-icons-outlined" }, "close")
+    ),
+
+    // WhatsApp SHARE button
+    React.createElement(Button, {
       variant: "outlined",
       style: {
         color: "#25D366",
@@ -386,8 +394,16 @@ filteredCoupons.length === 0
       },
       onClick: () => handleShareWhatsApp(selectedCoupon)
     },
-"Share with WhatsApp")					   
-            )})()
+      // WhatsApp icon from your icons folder
+      React.createElement("img", {
+        src: "icons/whatsapp.png",
+        style: { width: 20, height: 20 }
+      }),
+      "SHARE"
+    )
+
+  )
+
           ),
 
           /* ADD COUPON DIALOG */
