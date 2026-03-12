@@ -313,22 +313,23 @@ filteredCoupons.length === 0
 
               React.createElement("div",{
                 style:{
-                  display: "flex",
-    justifyContent: "flex-start", // align to left
-    gap: "0px",                   // no extra gap
-    alignItems: "center"          // vertical alignment
+                   display:"flex",
+                  justifyContent:"space-between",
+                  alignItems:"flex-start"
                 }
               },
 
                 /* LEFT COLUMN (BUTTONS ONLY) */
                 React.createElement("div",{
                   style:{
-                    display:"flex",
-                    gap:"2px"
+                    display: "flex",
+    justifyContent: "flex-start", // align to left
+    gap: "0px",                   // no extra gap
+    alignItems: "center"          // vertical alignment
                   }
                 },
 									React.createElement(IconButton,{
-                    style:{color:"#C1121F"},
+                    style:{color:"#C1121F", padding: 4},
                     onClick:e=>handleDelete(coupon.id,e)
                   },
                     React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
@@ -336,19 +337,19 @@ filteredCoupons.length === 0
 
                   !coupon.used
                     ? React.createElement(IconButton,{
-                        style:{color:UNUSED_GRAY},
+                        style:{color:UNUSED_GRAY, padding: 4},
                         onClick:e=>handleMarkUsed(coupon.id,e)
                       },
                         React.createElement("span",{className:"material-icons-outlined"},"check_circle_outline")
                       )
                     : React.createElement(IconButton,{
-                        style:{color:"rgb(16 94 17)"},
+                        style:{color:"rgb(16 94 17)", padding: 4},
                         onClick:e=>handleMarkUnused(coupon.id,e)
                       },
                         React.createElement("span",{className:"material-icons-outlined"},"check_circle")
                       ),
 					React.createElement(IconButton, {
-  style: { color: UNUSED_GRAY }, // primary color for edit
+  style: { color: UNUSED_GRAY , padding: 4}, // primary color for edit
   onClick: e => handleEdit(coupon, e)  // new edit handler
 },
   React.createElement("span", { className: "material-icons-outlined" }, "edit")
