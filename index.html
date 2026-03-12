@@ -83,6 +83,8 @@ Shared from Nachman's Coupons`;
   window.open(url, "_blank");
 }
 
+	 
+
     function App() {
       const [coupons, setCoupons] = React.useState(loadCoupons());
       const [showRelevantOnly, setShowRelevantOnly] = React.useState(false);
@@ -97,30 +99,66 @@ Shared from Nachman's Coupons`;
       const [orderedBy, setOrderedBy] = React.useState("");
       const [dueDate, setDueDate] = React.useState("");
       const [description, setDescription] = React.useState("");
+		const [editingCouponId, setEditingCouponId] = useState(null);
 
       React.useEffect(() => saveCoupons(coupons), [coupons]);
 
       function handleAdd(e) {
-        e.preventDefault();
-        if (!name.trim() || !code.trim()||!dueDate.trim()){
-			alert("Name, Code and Due date are required!");
-				  return;
-		};
-        const newCoupon = {
-          id: Date.now(), name: name.trim(), code: code.trim(),
-          orderedBy: orderedBy.trim(), dueDate, description: description.trim(),
-          used: false
-        };
-        setCoupons(prev => [...prev, newCoupon]);
-        setName(""); setCode(""); setOrderedBy(""); setDueDate(""); setDescription("");
-      }
+  e.preventDefault();
+
+  if (!name.trim() || !code.trim() || !dueDate) {
+    alert("Name, Code and Due Date are required!");
+    return;
+  }
+
+  if (editingCouponId) {
+    // Edit existing coupon
+    setCoupons(prev => prev.map(c =>
+      c.id === editingCouponId
+        ? { ...c, name: name.trim(), code: code.trim(), orderedBy: orderedBy.trim(), dueDate, description: description.trim() }
+        : c
+    ));
+    setEditingCouponId(null); // reset edit mode
+  } else {
+    // Add new coupon
+    const newCoupon = {
+      id: Date.now(),
+      name: name.trim(),
+      code: code.trim(),
+      orderedBy: orderedBy.trim(),
+      dueDate,
+      description: description.trim(),
+      used: false
+    };
+    setCoupons(prev => [...prev, newCoupon]);
+  }
+
+  // Close dialog and reset form
+  setAddDialogOpen(false);
+  setName(""); setCode(""); setOrderedBy(""); setDueDate(""); setDescription("");
+}
 
       function handleMarkUsed(id, e) { e.stopPropagation(); if (!confirm("Mark this coupon as used?")) return; setCoupons(prev => prev.map(c => c.id===id?{...c,used:true}:c)); }
       function handleMarkUnused(id, e) { e.stopPropagation(); if (!confirm("Mark this coupon as unused?")) return; setCoupons(prev => prev.map(c => c.id===id?{...c,used:false}:c)); }
       function handleDelete(id, e) { e.stopPropagation(); if (!confirm("Delete this coupon?")) return; setCoupons(prev => prev.filter(c=>c.id!==id)); }
       function openDetails(coupon) { setSelectedCoupon(coupon); setDialogOpen(true); }
       function closeDetails() { setDialogOpen(false); setSelectedCoupon(null); }
-	  function handleExport() {
+	   function handleEdit(coupon, e) {
+  e.stopPropagation();  // prevent card click from opening details
+  // Fill your form state with coupon data
+  setName(coupon.name);
+  setCode(coupon.code);
+  setOrderedBy(coupon.orderedBy || "");
+  setDueDate(coupon.dueDate);
+  setDescription(coupon.description || "");
+
+  // Open the add/edit dialog
+  setAddDialogOpen(true);
+
+  // Set editing mode flag
+  setEditingCouponId(coupon.id); // new state: use to know we are editing
+}
+		function handleExport() {
   const dataStr = JSON.stringify(coupons, null, 2);
   const blob = new Blob([dataStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
