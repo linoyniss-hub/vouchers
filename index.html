@@ -303,6 +303,12 @@ filteredCoupons.length === 0
                     marginTop:"4px"
                   }
                 },
+									React.createElement(IconButton,{
+                    style:{color:UNUSED_GRAY},
+                    onClick:e=>handleDelete(coupon.id,e)
+                  },
+                    React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
+                  ),
 
                   !coupon.used
                     ? React.createElement(IconButton,{
@@ -316,14 +322,9 @@ filteredCoupons.length === 0
                         onClick:e=>handleMarkUnused(coupon.id,e)
                       },
                         React.createElement("span",{className:"material-icons-outlined"},"check_circle")
-                      ),
+                      )
 
-                  React.createElement(IconButton,{
-                    style:{color:UNUSED_GRAY},
-                    onClick:e=>handleDelete(coupon.id,e)
-                  },
-                    React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
-                  )
+                  
 
                 )
 
