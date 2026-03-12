@@ -337,74 +337,83 @@ filteredCoupons.length === 0
     ),
 
           /* DETAILS DIALOG */
-          React.createElement(Dialog, { open: dialogOpen, onClose: closeDetails, fullWidth:true, maxWidth:"sm", PaperProps:{style:{borderRadius:20}}},
-            selectedCoupon && (()=>{const status=getStatus(selectedCoupon); const headerBg=status.bg||"rgba(113, 162, 182, 0.5)"; const handleCopy=()=>{navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!");};
-            return React.createElement(Box,null,
-              React.createElement(Box,{style:{background:headerBg, padding:"20px 24px", borderTopLeftRadius:20, borderTopRightRadius:20, borderBottom:"1px solid rgba(0,0,0,0.12)"}},
-                React.createElement(Typography,{variant:"h6", color:"textSecondary", style:{fontWeight:600}},selectedCoupon.name),
-                React.createElement(Typography,{variant:"body2", color:"textSecondary", style:{fontWeight:500}},"Coupon Details")
-              ),
-              React.createElement(DialogContent,null,
-                React.createElement(Box,{style:{marginBottom:24}},
-                  React.createElement(Typography,{variant:"overline", color:"textSecondary"},"CODE"),
-                  React.createElement(Paper,{variant:"outlined", style:{padding:"8px 16px", display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:6}},
-                    React.createElement(Typography,{variant:"h6", color:"textPrimary", style:{letterSpacing:1, fontWeight:500}},selectedCoupon.code),
-                    React.createElement(IconButton,{onClick:handleCopy,size:"small"},
-                      React.createElement("span",{className:"material-icons-outlined"},"content_copy")
-                    )
-                  )
-                ),
-                React.createElement(Grid,{container:true, spacing:3},
-                  React.createElement(Grid,{item:true, xs:6},
-                    React.createElement(Typography,{variant:"overline", color:"textSecondary"},"ORDERED BY"),
-                    React.createElement(Typography,{variant:"body1"},selectedCoupon.orderedBy||"-")
-                  ),
-                  React.createElement(Grid,{item:true, xs:6},
-                    React.createElement(Typography,{variant:"overline", color:"textSecondary"},"DUE DATE"),
-                    React.createElement(Typography,{variant:"body1"},selectedCoupon.dueDate||"-")
-                  )
-                ),
-                React.createElement(Box,{style:{marginTop:28}},
-                  React.createElement(Typography,{variant:"overline", color:"textSecondary"},"DESCRIPTION"),
-                  React.createElement(Paper,{variant:"outlined", style:{padding:16, marginTop:6}},
-                    React.createElement(Typography,{variant:"body2"},selectedCoupon.description||"No description")
-                  )
-                )
-              ),
-              // --- Buttons container on right ---
-  React.createElement("div", {
-    style: { display: "flex", gap: "8px" } // <--- makes buttons appear next to each other
-  },
-
-    // Close button
-    React.createElement(IconButton, { onClick: closePopup },
-      React.createElement("span", { className: "material-icons-outlined" }, "close")
+React.createElement(Dialog, {
+  open: dialogOpen,
+  onClose: closeDetails,
+  fullWidth: true,
+  maxWidth: "sm",
+  PaperProps: { style: { borderRadius: 20 } }
+},
+  selectedCoupon && React.createElement(Box, null,
+    // --- Header with title and buttons ---
+    React.createElement(Box, {
+      style: {
+        background: getStatus(selectedCoupon).bg || "rgba(113, 162, 182, 0.5)",
+        padding: "20px 24px",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottom: "1px solid rgba(0,0,0,0.12)",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }
+    },
+      React.createElement(Typography, { variant: "h6", color: "textSecondary", style: { fontWeight: 600 } }, selectedCoupon.name),
+      React.createElement("div", { style: { display: "flex", gap: "8px" } },
+        // Close button
+        React.createElement(IconButton, { onClick: closePopup },
+          React.createElement("span", { className: "material-icons-outlined" }, "close")
+        ),
+        // WhatsApp SHARE button
+        React.createElement(Button, {
+          variant: "outlined",
+          style: {
+            color: "#25D366",
+            borderColor: "#25D366",
+            textTransform: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: 4
+          },
+          onClick: () => handleShareWhatsApp(selectedCoupon)
+        },
+          React.createElement("img", { src: "icons/whatsapp.png", style: { width: 20, height: 20 } }),
+          "SHARE"
+        )
+      )
     ),
 
-    // WhatsApp SHARE button
-    React.createElement(Button, {
-      variant: "outlined",
-      style: {
-        color: "#25D366",
-        borderColor: "#25D366",
-        textTransform: "none",
-        display: "flex",
-        alignItems: "center",
-        gap: 4
-      },
-      onClick: () => handleShareWhatsApp(selectedCoupon)
-    },
-      // WhatsApp icon from your icons folder
-      React.createElement("img", {
-        src: "icons/whatsapp.png",
-        style: { width: 20, height: 20 }
-      }),
-      "SHARE"
+    // --- Dialog Content ---
+    React.createElement(DialogContent, null,
+      React.createElement(Box, { style: { marginBottom: 24 } },
+        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "CODE"),
+        React.createElement(Paper, { variant: "outlined", style: { padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 } },
+          React.createElement(Typography, { variant: "h6", color: "textPrimary", style: { letterSpacing: 1, fontWeight: 500 } }, selectedCoupon.code),
+          React.createElement(IconButton, { onClick: () => { navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!"); }, size: "small" },
+            React.createElement("span", { className: "material-icons-outlined" }, "content_copy")
+          )
+        )
+      ),
+      React.createElement(Grid, { container: true, spacing: 3 },
+        React.createElement(Grid, { item: true, xs: 6 },
+          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "ORDERED BY"),
+          React.createElement(Typography, { variant: "body1" }, selectedCoupon.orderedBy || "-")
+        ),
+        React.createElement(Grid, { item: true, xs: 6 },
+          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DUE DATE"),
+          React.createElement(Typography, { variant: "body1" }, selectedCoupon.dueDate || "-")
+        )
+      ),
+      React.createElement(Box, { style: { marginTop: 28 } },
+        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DESCRIPTION"),
+        React.createElement(Paper, { variant: "outlined", style: { padding: 16, marginTop: 6 } },
+          React.createElement(Typography, { variant: "body2" }, selectedCoupon.description || "No description")
+        )
+      )
     )
 
   )
-
-          )),
+),
 
           /* ADD COUPON DIALOG */
           React.createElement(Dialog, { open: addDialogOpen, onClose:()=>setAddDialogOpen(false), fullWidth:true, maxWidth:"sm", PaperProps:{style:{borderRadius:20}}},
