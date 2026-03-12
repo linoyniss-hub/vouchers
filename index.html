@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nachman's Coupons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#277DA1">
+  
+  <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/726/726448.png">
+  
+  <link rel="manifest" href='data:application/json,{"name":"Nachman Coupons","short_name":"Coupons","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#277DA1","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/726/726448.png","sizes":"512x512","type":"image/png"}]}'>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Roboto, sans-serif;
+    }
+    .material-icons-outlined {
+      font-family: 'Material Icons Outlined';
+      font-size: 24px;
+      vertical-align: middle;
+    }
+    .status-icon {
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .row-wrapper {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .clickable-card {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React 17 -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <!-- Material-UI v4 Core -->
+  <script src="https://unpkg.com/@material-ui/core@4.12.4/umd/material-ui.development.js"></script>
+
+  <script>
+    const {
+      Container,
+      Paper,
+      Typography,
+      TextField,
+      Button,
+      Grid,
+      Card,
+      CardContent,
+      IconButton,
+      Switch,
+      FormControlLabel,
+      Box,
+      CssBaseline,
+      Fab,
+      ThemeProvider,
+      createMuiTheme,
+      Dialog,
+      DialogTitle,
+      DialogContent,
+      DialogActions
+    } = MaterialUI;
+
+    const STORAGE_KEY = "couponManagerDataReact_v4";
+    const THEME_KEY = "couponManagerThemeMode";
+
+    const UNUSED_GRAY = "rgb(97, 98, 95)"; // icons + trash
+
+    function loadCoupons() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+	
+
+    function saveCoupons(coupons) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(coupons));
+    }
+
+    function getStatus(coupon) {
+      if (coupon.used)
+        return {
+          type: "used",
+          bg: "rgba(144, 190, 109, 0.45)", // more transparent
+          icon: "check_circle",
+          iconColor: "#177818"
+        };
+
+      if (!coupon.dueDate)
+        return { type: "normal", bg: "", icon: "", iconColor: "" };
+
+      const today = new Date();
+      const due = new Date(coupon.dueDate);
+      const diffTime = due - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0)
+        return {
+          type: "expired",
+          bg: "rgba(200, 0, 0, 0.5)", // more red, still soft
+          icon: "cancel",
+          iconColor: "#C1121F"          // darker red X
+        };
+
+      if (diffDays <= 30)
+        return {
+          type: "soon",
+          bg: "rgba(249, 220, 92, 0.7)", // more transparent
+          icon: "warning_amber",
+          iconColor: "#F8961E"
+        };
+
+      return { type: "normal", bg: "", icon: "", iconColor: "" };
+    }
+
+    function isExpired(coupon) {
+      if (!coupon.dueDate) return false;
+      const today = new Date();
+      const due = new Date(coupon.dueDate);
+      return due - today < 0;
+    }
+
+    function App() {
+      const [coupons, setCoupons] = React.useState(loadCoupons());
+      const [showRelevantOnly, setShowRelevantOnly] = React.useState(false);
+
+      const [name, setName] = React.useState("");
+      const [code, setCode] = React.useState("");
+      const [orderedBy, setOrderedBy] = React.useState("");
+      const [dueDate, setDueDate] = React.useState("");
+      const [description, setDescription] = React.useState("");
+
+      const [search, setSearch] = React.useState("");
+      const [sortBy, setSortBy] = React.useState("none");
+
+      const [dialogOpen, setDialogOpen] = React.useState(false);
+      const [selectedCoupon, setSelectedCoupon] = React.useState(null);
+
+      React.useEffect(() => saveCoupons(coupons), [coupons]);
+	  
+	  	function handleExport() {
+  if (coupons.length === 0) return alert("No coupons to export!");
+  
+  const dataString = JSON.stringify(coupons, null, 2);
+  // Using a Data URI instead of a Blob for better compatibility in local HTML files
+  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataString);
+  
+  const exportFileDefaultName = `coupons_${new Date().toISOString().slice(0,10)}.json`;
+  
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+}
+	  
+	  function handleImport() {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".json";
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        if (Array.isArray(importedData)) {
+          // Filter out exact duplicates by ID to avoid clutter
+          const currentIds = new Set(coupons.map(c => c.id));
+          const newData = importedData.filter(c => !currentIds.has(c.id));
+          
+          if (newData.length === 0) {
+            alert("All coupons in this file are already in your list.");
+            return;
+          }
+
+          if (confirm(`Found ${newData.length} new coupons. Add them?`)) {
+            setCoupons(prev => [...prev, ...newData]);
+          }
+        }
+      } catch (err) {
+        alert("Could not read file. Make sure it's a valid coupon backup.");
+      }
+    };
+    reader.readAsText(file);
+  };
+  fileInput.click();
+}
+
+      function handleAdd(e) {
+        e.preventDefault();
+        if (!name.trim() || !code.trim()) return;
+
+        const newCoupon = {
+          id: Date.now(),
+          name: name.trim(),
+          code: code.trim(),
+          orderedBy: orderedBy.trim(),
+          dueDate,
+          description: description.trim(),
+          used: false
+        };
+
+        setCoupons(prev => prev.concat(newCoupon));
+        setName(""); setCode(""); setOrderedBy(""); setDueDate(""); setDescription("");
+      }
+
+      function handleMarkUsed(id, e) {
+        e.stopPropagation();
+        if (!confirm("Mark this coupon as used?")) return;
+        setCoupons(prev => prev.map(c => c.id === id ? { ...c, used: true } : c));
+      }
+
+      function handleMarkUnused(id, e) {
+        e.stopPropagation();
+        if (!confirm("Mark this coupon as unused?")) return;
+        setCoupons(prev => prev.map(c => c.id === id ? { ...c, used: false } : c));
+      }
+
+      function handleDelete(id, e) {
+        e.stopPropagation();
+        if (!confirm("Delete this coupon?")) return;
+        setCoupons(prev => prev.filter(c => c.id !== id));
+      }
+
+      function openDetails(coupon) {
+        setSelectedCoupon(coupon);
+        setDialogOpen(true);
+      }
+
+      function closeDetails() {
+        setDialogOpen(false);
+        setSelectedCoupon(null);
+      }
+
+      // filter: show relevant only = remove used OR expired
+      let filteredCoupons = coupons.slice();
+
+      if (showRelevantOnly) {
+        filteredCoupons = filteredCoupons.filter(c => !c.used && !isExpired(c));
+      }
+
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        filteredCoupons = filteredCoupons.filter(c =>
+          (c.name || "").toLowerCase().includes(q) ||
+          (c.code || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (sortBy === "name") {
+        filteredCoupons.sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" })
+        );
+      } else if (sortBy === "dueDate") {
+        filteredCoupons.sort((a, b) => {
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1;  // no date = later
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate) - new Date(b.dueDate); // closest first
+        });
+      }
+
+      return React.createElement(
+        Container,
+        { maxWidth: "lg", style: { padding: "32px 16px" } },
+
+        React.createElement(
+          Paper,
+          { elevation: 3, style: { padding: 24 } },
+
+          React.createElement(
+		  Typography, 
+		  { 
+			variant: "h5", 
+			gutterBottom: true, 
+			align: "center", // This centers the text
+			style: { fontWeight: 600, marginTop: 8 } // Optional: adds some weight and space
+		  }, 
+		  "Coupon Keeper"
+		),
+	
+		
+          /* FORM */
+          React.createElement(
+            Box,
+            { component: "form", onSubmit: handleAdd, style: { marginTop: 16, marginBottom: 24 } },
+            React.createElement(
+              Grid,
+              { container: true, spacing: 2 },
+
+              React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                React.createElement(TextField, {
+                  label: "Name", value: name, onChange: e => setName(e.target.value),
+                  fullWidth: true, required: true
+                })
+              ),
+
+              React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                React.createElement(TextField, {
+                  label: "Code", value: code, onChange: e => setCode(e.target.value),
+                  fullWidth: true, required: true
+                })
+              ),
+
+              React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                React.createElement(TextField, {
+                  label: "Who ordered it", value: orderedBy, onChange: e => setOrderedBy(e.target.value),
+                  fullWidth: true
+                })
+              ),
+
+              React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                React.createElement(TextField, {
+                  label: "Due date", type: "date", value: dueDate,
+                  onChange: e => setDueDate(e.target.value),
+                  fullWidth: true, InputLabelProps: { shrink: true }, required: true
+                })
+              ),
+
+              React.createElement(Grid, { item: true, xs: 12 },
+                React.createElement(TextField, {
+                  label: "Description", value: description,
+                  onChange: e => setDescription(e.target.value),
+                  fullWidth: true, multiline: true, minRows: 2
+                })
+              ),
+
+              React.createElement(Grid, { item: true, xs: 12, style: { textAlign: "right" } },
+                React.createElement(Button, { type: "submit", variant: "contained", color: "primary" }, "Add Coupon")
+              )
+            )
+          ),
+		  
+		  React.createElement(
+    Grid, 
+    { item: true, xs:12, sm: 5, style: { textAlign: "right", display: "flex", gap: "8px", justifyContent: "flex-start" } },
+    
+    React.createElement(
+      Button, 
+      { 
+        size: "small", 
+        variant: "outlined", 
+        color: "primary", 
+        onClick: handleExport,
+        startIcon: React.createElement("span", { className: "material-icons-outlined" }, "download")
+      }, 
+      "Download"
+    ),
+    
+    React.createElement(
+      Button, 
+      { 
+        size: "small", 
+        variant: "outlined", 
+        color: "primary", 
+        onClick: handleImport,
+        startIcon: React.createElement("span", { className: "material-icons-outlined" }, "upload_file")
+      }, 
+      "Import"
+    )
+  ),
+
+          /* SEARCH + FILTER + SORT */
+          React.createElement(
+            Grid,
+            { container: true, spacing: 2, alignItems: "center", style: { marginBottom: 16 } },
+
+            React.createElement(Grid, { item: true, xs: 12, sm: 4 },
+              React.createElement(TextField, {
+                label: "Search by name or code",
+                value: search,
+                onChange: e => setSearch(e.target.value),
+                fullWidth: true
+              })
+            ),
+
+            React.createElement(Grid, { item: true, xs: 12, sm: 4 },
+              React.createElement(FormControlLabel, {
+                control: React.createElement(Switch, {
+                  checked: showRelevantOnly,
+                  onChange: e => setShowRelevantOnly(e.target.checked),
+                  color: "primary"
+                }),
+                label: "Show relevant only"
+              })
+            ),
+
+            React.createElement(Grid, { item: true, xs: 12, sm: 4, style: { textAlign: "right" } },
+              React.createElement(TextField, {
+                select: true,
+                SelectProps: { native: true },
+                label: "Sort by",
+                value: sortBy,
+                onChange: e => setSortBy(e.target.value),
+                variant: "outlined",
+                size: "small"
+              },
+                React.createElement("option", { value: "none" }, "None"),
+                React.createElement("option", { value: "name" }, "Name"),
+                React.createElement("option", { value: "dueDate" }, "Due date (closest first)")
+              )
+            )
+          ),
+
+          /* COUNTS & SHARING */
+React.createElement(
+  Grid,
+  { container: true, alignItems: "center", style: { marginBottom: 16, gap: 8 } },
+  
+  React.createElement(Grid, { item: true, xs: 12, sm: 6 },
+    React.createElement(Typography, { variant: "body2", color: "textSecondary" },
+      `Total: ${coupons.length} | Showing: ${filteredCoupons.length}`
+    )
+  ),
+
+  
+),
+
+          /* LIST */
+          filteredCoupons.length === 0
+            ? React.createElement(Typography, {
+                variant: "body2",
+                color: "textSecondary",
+                style: { textAlign: "center", padding: "32px 0" }
+              }, "No coupons yet.")
+            : React.createElement(
+                Grid,
+                { container: true, spacing: 2 },
+
+                filteredCoupons.map(coupon => {
+                  const status = getStatus(coupon);
+
+                  return React.createElement(
+                    Grid,
+                    { item: true, xs: 12, key: coupon.id },
+
+                    React.createElement(
+                      "div",
+                      { className: "row-wrapper" },
+
+                      /* LEFT FLOATING ICON */
+                      React.createElement(
+                        "div",
+                        { className: "status-icon" },
+                        status.icon
+                          ? React.createElement("span", {
+                              className: "material-icons-outlined",
+                              style: { color: status.iconColor }
+                            }, status.icon)
+                          : null
+                      ),
+
+                      /* CARD */
+                      React.createElement(
+                        Card,
+                        {
+                          variant: "outlined",
+                          className: "clickable-card",
+                          onClick: () => openDetails(coupon),
+                          style: {
+                            width: "100%",
+                            background: status.bg || "inherit",
+                            padding: 8,
+							borderRadius: 10
+                          }
+                        },
+
+                        React.createElement(
+                          CardContent,
+                          { style: { paddingBottom: 8 } },
+
+                          React.createElement(
+                            Grid,
+                            { container: true, spacing: 2, alignItems: "center" },
+
+                            React.createElement(Grid, { item: true, xs: 12, sm: 4 },
+                              React.createElement(Typography, { variant: "subtitle1", style: { fontWeight: 600 } },
+                                coupon.name
+                              )
+                            ),
+
+                            React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                              React.createElement(Typography, { variant: "body2" }, coupon.code)
+                            ),
+
+                            React.createElement(Grid, { item: true, xs: 12, sm: 3 },
+                              React.createElement(Typography, { variant: "body2" },
+                                coupon.dueDate || "-"
+                              )
+                            ),
+
+                            /* ACTION BUTTONS */
+                            React.createElement(Grid, {
+                              item: true,
+                              xs: 12,
+                              sm: 2,
+                              style: { textAlign: "right" }
+                            },
+                              !coupon.used
+                                ? React.createElement(
+                                    IconButton,
+                                    { style: { color: UNUSED_GRAY }, onClick: e => handleMarkUsed(coupon.id, e) },
+                                    React.createElement("span", { className: "material-icons-outlined" }, "check_circle_outline")
+                                  )
+                                : React.createElement(
+                                    IconButton,
+                                    { style: { color: "#177818" }, onClick: e => handleMarkUnused(coupon.id, e) },
+                                    React.createElement("span", { className: "material-icons-outlined" }, "check_circle")
+                                  ),
+
+                              React.createElement(
+                                IconButton,
+                                { style: { color: UNUSED_GRAY }, onClick: e => handleDelete(coupon.id, e) },
+                                React.createElement("span", { className: "material-icons-outlined" }, "delete_outline")
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  );
+                })
+              ),
+
+/* DETAILS DIALOG */
+React.createElement(
+  Dialog,
+  { open: dialogOpen, onClose: closeDetails, fullWidth: true, maxWidth: "sm" , PaperProps: { style: { borderRadius: 20 } }},
+
+  selectedCoupon && (() => {
+    // Get the status to match the row background
+    const status = getStatus(selectedCoupon);
+    const headerBg = status.bg || "inherit"; 
+	
+	// Function to handle the copy action
+    const handleCopy = () => {
+      navigator.clipboard.writeText(selectedCoupon.code);
+      alert("Code copied to clipboard!");
+    };
+
+    return React.createElement(
+      Box,
+      null,
+
+      /* HEADER BAR - Row Color Background */
+      React.createElement(
+        Box,
+        {
+          style: {
+            background: headerBg,
+            padding: "20px 24px",
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderBottom: "1px solid rgba(0,0,0,0.12)"
+          }
+        },
+
+        React.createElement(
+          Typography,
+          { variant: "h6", color: "textSecondary", style: { fontWeight: 600 } },
+          selectedCoupon.name
+        ),
+
+        React.createElement(
+          Typography,
+          { variant: "body2", color: "textSecondary", style: { fontWeight: 500 } },
+          "Coupon Details"
+        )
+      ),
+
+      /* CONTENT - Styles and Labels Preserved */
+      React.createElement(
+        DialogContent,
+        { style: { paddingTop: 24 } },
+
+        /* CODE */
+        React.createElement(
+          Box,
+          { style: { marginBottom: 24 } },
+
+          React.createElement(
+            Typography,
+            { variant: "overline", color: "textSecondary" },
+            "CODE"
+          ),
+
+          React.createElement(
+            Paper,
+            {
+              variant: "outlined",
+              style: {
+                padding: "8px 16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginTop: 6
+              }
+            },
+            React.createElement(
+              Typography, 
+              { variant: "h6", color: "textPrimary", style: { letterSpacing: 1, fontWeight: 500 } }, 
+              selectedCoupon.code
+            ),
+            React.createElement(
+              IconButton,
+              { onClick: handleCopy, size: "small", color: "textPrimary" },
+              React.createElement("span", { className: "material-icons-outlined" }, "content_copy")
+            )
+          )
+        ),
+
+        /* INFO GRID */
+        React.createElement(
+          Grid,
+          { container: true, spacing: 3 },
+
+          React.createElement(
+            Grid,
+            { item: true, xs: 6 },
+
+            React.createElement(
+              Typography,
+              { variant: "overline", color: "textSecondary" },
+              "ORDERED BY"
+            ),
+
+            React.createElement(
+              Typography,
+              { variant: "body1" },
+              selectedCoupon.orderedBy || "-"
+            )
+          ),
+
+          React.createElement(
+            Grid,
+            { item: true, xs: 6 },
+
+            React.createElement(
+              Typography,
+              { variant: "overline", color: "textSecondary" },
+              "DUE DATE"
+            ),
+
+            React.createElement(
+              Typography,
+              { variant: "body1" },
+              selectedCoupon.dueDate || "-"
+            )
+          )
+        ),
+
+        /* DESCRIPTION */
+        React.createElement(
+          Box,
+          { style: { marginTop: 28 } },
+
+          React.createElement(
+            Typography,
+            { variant: "overline", color: "textSecondary" },
+            "DESCRIPTION"
+          ),
+
+          React.createElement(
+            Paper,
+            {
+              variant: "outlined",
+              style: {
+                padding: 16,
+                marginTop: 6
+              }
+            },
+
+            React.createElement(
+              Typography,
+              { variant: "body2" },
+              selectedCoupon.description || "No description"
+            )
+          )
+        )
+      ),
+
+      /* ACTIONS */
+      React.createElement(
+        DialogActions,
+        { style: { padding: "8px 16px 16px" } },
+
+        React.createElement(
+          Button,
+          { onClick: closeDetails, color: "primary" },
+          "Close"
+        )
+      )
+    );
+  })()
+)
+        )
+      );
+    }
+
+    /* THEME ROOT */
+    function ThemeRoot() {
+      const [themeMode, setThemeMode] = React.useState(() => localStorage.getItem(THEME_KEY) || "system");
+      const [systemDark, setSystemDark] = React.useState(
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      );
+
+      React.useEffect(() => {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const handler = e => setSystemDark(e.matches);
+        mq.addListener(handler);
+        return () => mq.removeListener(handler);
+      }, []);
+
+      React.useEffect(() => localStorage.setItem(THEME_KEY, themeMode), [themeMode]);
+
+      const effectiveMode =
+        themeMode === "system" ? (systemDark ? "dark" : "light") : themeMode;
+
+      const theme = createMuiTheme({
+        palette: {
+          type: effectiveMode,
+          primary: { main: "#277DA1" },
+          secondary: { main: "#F3722C" }
+        }
+      });
+
+      function cycleMode() {
+        setThemeMode(prev =>
+          prev === "system" ? "light" :
+          prev === "light" ? "dark" :
+          "system"
+        );
+      }
+
+      const iconName =
+        themeMode === "system" ? "brightness_auto" :
+        themeMode === "light" ? "light_mode" :
+        "dark_mode";
+
+      return React.createElement(
+        ThemeProvider,
+        { theme },
+        React.createElement(CssBaseline, null),
+        React.createElement(App, null),
+        React.createElement(
+          Fab,
+          {
+            color: "primary",
+            onClick: cycleMode,
+            style: { position: "fixed", bottom: 16, right: 16 }
+          },
+          React.createElement("span", { className: "material-icons-outlined" }, iconName)
+        )
+      );
+    }
+	
+
+
+
+
+    ReactDOM.render(
+      React.createElement(ThemeRoot, null),
+      document.getElementById("root")
+    );
+  </script>
+</body>
+</html>
