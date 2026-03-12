@@ -51,7 +51,7 @@
     function saveCoupons(coupons) { localStorage.setItem(STORAGE_KEY, JSON.stringify(coupons)); }
 
     function getStatus(coupon) {
-      if (coupon.used) return { type: "used", bg: "rgba(144, 190, 109, 0.6)", icon: "check_circle", iconColor: "rgb(16 94 17)" };
+      if (coupon.used) return { type: "used", bg: "rgba(144, 190, 109, 0.3)", icon: "check_circle", iconColor: "rgb(16 94 17)" };
       if (!coupon.dueDate) return { type: "normal", bg: "", icon: "", iconColor: "" };
       const today = new Date();
       const due = new Date(coupon.dueDate);
