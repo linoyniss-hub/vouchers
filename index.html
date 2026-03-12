@@ -338,17 +338,17 @@ filteredCoupons.length === 0
     }
   },
     React.createElement(IconButton, { style: { color: "#C1121F", padding: 4 }, onClick: e => handleDelete(coupon.id, e) },
-      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "delete_outline")
+      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 25 } }, "delete_outline")
     ),
     !coupon.used
       ? React.createElement(IconButton, { style: { color: UNUSED_GRAY, padding: 4 }, onClick: e => handleMarkUsed(coupon.id, e) },
-          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "check_circle_outline")
+          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 25 } }, "check_circle_outline")
         )
       : React.createElement(IconButton, { style: { color: "rgb(16 94 17)", padding: 4 }, onClick: e => handleMarkUnused(coupon.id, e) },
-          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "check_circle")
+          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 25 } }, "check_circle")
         ),
     React.createElement(IconButton, { style: { color: UNUSED_GRAY, padding: 4 }, onClick: e => handleEdit(coupon, e) },
-      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "edit")
+      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 25 } }, "edit")
     )
   ),
 
