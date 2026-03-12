@@ -245,7 +245,7 @@ filteredCoupons.length === 0
             onClick:()=>openDetails(coupon),
             style:{
               width:"100%",
-              background:status.bg || "rgba(113, 162, 182,0.2)",
+              background:status.bg || "rgba(113, 162, 182,0.5)",
               padding:8,
               borderRadius:10
             }
@@ -321,7 +321,7 @@ filteredCoupons.length === 0
 
           /* DETAILS DIALOG */
           React.createElement(Dialog, { open: dialogOpen, onClose: closeDetails, fullWidth:true, maxWidth:"sm", PaperProps:{style:{borderRadius:20}}},
-            selectedCoupon && (()=>{const status=getStatus(selectedCoupon); const headerBg=status.bg||"inherit"; const handleCopy=()=>{navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!");};
+            selectedCoupon && (()=>{const status=getStatus(selectedCoupon); const headerBg=status.bg||"rgba(113, 162, 182, 0.5)"; const handleCopy=()=>{navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!");};
             return React.createElement(Box,null,
               React.createElement(Box,{style:{background:headerBg, padding:"20px 24px", borderTopLeftRadius:20, borderTopRightRadius:20, borderBottom:"1px solid rgba(0,0,0,0.12)"}},
                 React.createElement(Typography,{variant:"h6", color:"textSecondary", style:{fontWeight:600}},selectedCoupon.name),
