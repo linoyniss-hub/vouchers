@@ -322,44 +322,44 @@ filteredCoupons.length === 0
               },
 
                 /* LEFT COLUMN (BUTTONS ONLY) */
-                React.createElement("div",{
-                  style:{
-                    display: "flex",
-                    gap: "2px",       // <-- minimal spacing between buttons
-                    alignItems: "center",
-                  }
-                },
-                  // Delete
-                  React.createElement(IconButton,{
-                    style:{color:"rgb(163 15 26)", padding:4},
-                    onClick:e=>handleDelete(coupon.id,e)
-                  },
-                    React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"delete_outline")
-                  ),
+                React.createElement("div", {
+  style: {
+    display: "flex",
+    justifyContent: "space-between", // buttons on left, text on right
+    alignItems: "center",            // vertically center everything
+    width: "100%"
+  }
+},
+  // LEFT: Buttons container
+  React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "2px" // only space between buttons
+    }
+  },
+    React.createElement(IconButton, { style: { color: "#C1121F", padding: 4 }, onClick: e => handleDelete(coupon.id, e) },
+      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "delete_outline")
+    ),
+    !coupon.used
+      ? React.createElement(IconButton, { style: { color: UNUSED_GRAY, padding: 4 }, onClick: e => handleMarkUsed(coupon.id, e) },
+          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "check_circle_outline")
+        )
+      : React.createElement(IconButton, { style: { color: "rgb(16 94 17)", padding: 4 }, onClick: e => handleMarkUnused(coupon.id, e) },
+          React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "check_circle")
+        ),
+    React.createElement(IconButton, { style: { color: UNUSED_GRAY, padding: 4 }, onClick: e => handleEdit(coupon, e) },
+      React.createElement("span", { className: "material-icons-outlined", style: { fontSize: 20 } }, "edit")
+    )
+  ),
 
-                  // Mark Used / Unused
-                  !coupon.used
-                    ? React.createElement(IconButton,{
-                        style:{color:UNUSED_GRAY, padding:4},
-                        onClick:e=>handleMarkUsed(coupon.id,e)
-                      },
-                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"check_circle_outline")
-                      )
-                    : React.createElement(IconButton,{
-                        style:{color:"rgb(16 94 17)", padding:4},
-                        onClick:e=>handleMarkUnused(coupon.id,e)
-                      },
-                        React.createElement("span",{className:"material-icons-outlined", style:{fontSize:25}},"check_circle")
-                      ),
-
-                  // Edit
-                  React.createElement(IconButton, {
-                    style: { color: UNUSED_GRAY, padding:4 },
-                    onClick: e => handleEdit(coupon, e)
-                  },
-                    React.createElement("span", { className: "material-icons-outlined", style:{fontSize:25} }, "edit")
-                  )
-                ),
+  // RIGHT: Text container
+  React.createElement("div", { style: { textAlign: "right" } },
+    React.createElement(Typography, { variant: "subtitle1", style: { fontWeight: 600 } }, coupon.name),
+    React.createElement(Typography, { variant: "body2" },
+      coupon.dueDate ? new Date(coupon.dueDate).toLocaleDateString("en-GB") : "-"
+    )
+  )
+),
 
                 /* RIGHT COLUMN (TEXT) */
                 React.createElement("div",{style:{textAlign:"right"}},
