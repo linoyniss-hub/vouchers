@@ -379,7 +379,7 @@ React.createElement(Dialog, {
         ),
         React.createElement(Grid, { item: true, xs: 6 },
           React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DUE DATE"),
-          React.createElement(Typography, { variant: "body1" }, selectedCoupon.dueDate || "-")
+          React.createElement(Typography, { variant: "body1" }, new Date(selectedCoupon.dueDate).toLocaleDateString("en-GB") || "-")
         )
       ),
       React.createElement(Box, { style: { marginTop: 28 } },
