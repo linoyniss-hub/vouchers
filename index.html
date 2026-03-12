@@ -72,9 +72,7 @@
     : "-";
 
   const text =
-`🎟 Coupon
-${coupon.name}
-
+`🎟 Coupon: ${coupon.name}
 📅 Due: ${dueDate}
 ${coupon.code ? "🔑 Code: " + coupon.code : ""}
 
@@ -376,12 +374,19 @@ filteredCoupons.length === 0
               React.createElement(DialogActions,{style:{padding:"8px 16px 16px"}},
                 React.createElement(Button,{onClick:closeDetails, color:"primary"},"Close")
               ),
-				React.createElement(Button,{
-  variant:"contained",
-  style:{background:"#25D366", color:"white"},
-  onClick:()=>handleShareWhatsApp(selectedCoupon)
-},
-"Share to WhatsApp")					   
+				React.createElement(Button, {
+      variant: "outlined",
+      style: {
+        color: "#25D366",
+        borderColor: "#25D366",
+        textTransform: "none",
+        display: "flex",
+        alignItems: "center",
+        gap: 4
+      },
+      onClick: () => handleShareWhatsApp(selectedCoupon)
+    },
+"Share with WhatsApp")					   
             )})()
           ),
 
