@@ -1,6 +1,6 @@
 {
   "name": "Nachman Coupons",
-  "short_name": "Coupons",
+  "short_name": "Nachman Coupons",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
