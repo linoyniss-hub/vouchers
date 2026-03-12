@@ -360,7 +360,36 @@ React.createElement(Dialog, {
       React.createElement(Typography, { variant: "body2", color: "textSecondary", style: { fontWeight: 500 } }, "Coupon Details")
     ),
 
-    // --- Buttons Container on top-right (outside header) ---
+    
+    // --- Dialog Content ---
+    React.createElement(DialogContent, null,
+      React.createElement(Box, { style: { marginBottom: 24 } },
+        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "CODE"),
+        React.createElement(Paper, { variant: "outlined", style: { padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 } },
+          React.createElement(Typography, { variant: "h6", color: "textPrimary", style: { letterSpacing: 1, fontWeight: 500 } }, selectedCoupon.code),
+          React.createElement(IconButton, { onClick: () => { navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!"); }, size: "small" },
+            React.createElement("span", { className: "material-icons-outlined" }, "content_copy")
+          )
+        )
+      ),
+      React.createElement(Grid, { container: true, spacing: 3 },
+        React.createElement(Grid, { item: true, xs: 6 },
+          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "ORDERED BY"),
+          React.createElement(Typography, { variant: "body1" }, selectedCoupon.orderedBy || "-")
+        ),
+        React.createElement(Grid, { item: true, xs: 6 },
+          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DUE DATE"),
+          React.createElement(Typography, { variant: "body1" }, selectedCoupon.dueDate || "-")
+        )
+      ),
+      React.createElement(Box, { style: { marginTop: 28 } },
+        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DESCRIPTION"),
+        React.createElement(Paper, { variant: "outlined", style: { padding: 16, marginTop: 6 } },
+          React.createElement(Typography, { variant: "body2" }, selectedCoupon.description || "No description")
+        )
+      )
+    ),
+	// --- Buttons Container on top-right (outside header) ---
     React.createElement(Box, {
       style: {
         display: "flex",
@@ -399,36 +428,8 @@ React.createElement(Dialog, {
         }),
         "SHARE"
       )
-    ),
-
-    // --- Dialog Content ---
-    React.createElement(DialogContent, null,
-      React.createElement(Box, { style: { marginBottom: 24 } },
-        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "CODE"),
-        React.createElement(Paper, { variant: "outlined", style: { padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 } },
-          React.createElement(Typography, { variant: "h6", color: "textPrimary", style: { letterSpacing: 1, fontWeight: 500 } }, selectedCoupon.code),
-          React.createElement(IconButton, { onClick: () => { navigator.clipboard.writeText(selectedCoupon.code); alert("Code copied!"); }, size: "small" },
-            React.createElement("span", { className: "material-icons-outlined" }, "content_copy")
-          )
-        )
-      ),
-      React.createElement(Grid, { container: true, spacing: 3 },
-        React.createElement(Grid, { item: true, xs: 6 },
-          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "ORDERED BY"),
-          React.createElement(Typography, { variant: "body1" }, selectedCoupon.orderedBy || "-")
-        ),
-        React.createElement(Grid, { item: true, xs: 6 },
-          React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DUE DATE"),
-          React.createElement(Typography, { variant: "body1" }, selectedCoupon.dueDate || "-")
-        )
-      ),
-      React.createElement(Box, { style: { marginTop: 28 } },
-        React.createElement(Typography, { variant: "overline", color: "textSecondary" }, "DESCRIPTION"),
-        React.createElement(Paper, { variant: "outlined", style: { padding: 16, marginTop: 6 } },
-          React.createElement(Typography, { variant: "body2" }, selectedCoupon.description || "No description")
-        )
-      )
     )
+
 
   )
 ),
