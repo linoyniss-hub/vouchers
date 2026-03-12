@@ -226,56 +226,109 @@ React.createElement(Box, { style: { width: "100%", marginBottom: 24 } },
   )
 ),
 
-          /* LIST */
-          filteredCoupons.length === 0
-  ? React.createElement(Typography, { 
-      variant:"body2", 
-      color:"textSecondary", 
-      style:{textAlign:"center", padding:"32px 0"} 
-    }, "No coupons yet.")
-  : React.createElement(Grid, { container: true, spacing:2 },
+/* LIST */
+filteredCoupons.length === 0
+  ? React.createElement(Typography,{
+      variant:"body2",
+      color:"textSecondary",
+      style:{textAlign:"center", padding:"32px 0"}
+    },"No coupons yet.")
+  : React.createElement(Grid,{container:true, spacing:2},
       filteredCoupons.map(coupon=>{
         const status = getStatus(coupon);
-        return React.createElement(Grid, { item:true, xs:12, key:coupon.id },
-          React.createElement("div", { className: "row-wrapper" },
-            React.createElement("div",{className:"status-icon"}, 
+
+        return React.createElement(Grid,{item:true, xs:12, key:coupon.id},
+          React.createElement("div",{className:"row-wrapper"},
+
+            React.createElement("div",{className:"status-icon"},
               status.icon
-                ? React.createElement("span",{className:"material-icons-outlined", style:{color:status.iconColor}}, status.icon)
+                ? React.createElement("span",{
+                    className:"material-icons-outlined",
+                    style:{color:status.iconColor}
+                  },status.icon)
                 : null
             ),
-            React.createElement(Card,{ 
-              variant:"outlined", 
-              className:"clickable-card", 
-              onClick:()=>openDetails(coupon), 
-              style:{width:"100%", background:status.bg||"inherit", padding:8, borderRadius:10}
+
+            React.createElement(Card,{
+              variant:"outlined",
+              className:"clickable-card",
+              onClick:()=>openDetails(coupon),
+              style:{
+                width:"100%",
+                background:status.bg || "inherit",
+                padding:8,
+                borderRadius:10
+              }
             },
+
               React.createElement(CardContent,{style:{paddingBottom:8}},
-                React.createElement("div",{style:{display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap"}},
-                  
-                  // Left side: name, code, dueDate
-                  React.createElement("div",{style:{display:"flex", alignItems:"center", gap:"16px"}},
-                    React.createElement(Typography,{variant:"subtitle1", style:{fontWeight:600}}, coupon.name),
-                    React.createElement(Typography, { variant:"body2" },
-  coupon.dueDate 
-    ? new Date(coupon.dueDate).toLocaleDateString("en-GB") // dd/mm/yyyy format
-    : "-"
-)
+
+                React.createElement("div",{
+                  style:{
+                    display:"flex",
+                    flexDirection:"column",
+                    gap:"6px"
+                  }
+                },
+
+                  /* NAME */
+                  React.createElement(Typography,{
+                    variant:"subtitle1",
+                    style:{
+                      fontWeight:600,
+                      textAlign:"right"
+                    }
+                  },coupon.name),
+
+                  /* DUE DATE */
+                  React.createElement(Typography,{
+                    variant:"body2",
+                    style:{textAlign:"right"}
+                  },
+                    coupon.dueDate
+                      ? new Date(coupon.dueDate).toLocaleDateString("en-GB")
+                      : "-"
                   ),
-                  
-                  // Right side: action icons
-                  React.createElement("div",null,
+
+                  /* BUTTONS */
+                  React.createElement("div",{
+                    style:{
+                      display:"flex",
+                      justifyContent:"flex-start",
+                      gap:"4px",
+                      marginTop:"4px"
+                    }
+                  },
+
                     !coupon.used
-                      ? React.createElement(IconButton,{style:{color:UNUSED_GRAY}, onClick:e=>handleMarkUsed(coupon.id,e)},
-                          React.createElement("span",{className:"material-icons-outlined"},"check_circle_outline"))
-                      : React.createElement(IconButton,{style:{color:"#177818"}, onClick:e=>handleMarkUnused(coupon.id,e)},
-                          React.createElement("span",{className:"material-icons-outlined"},"check_circle")),
-                    React.createElement(IconButton,{style:{color:UNUSED_GRAY}, onClick:e=>handleDelete(coupon.id,e)},
-                      React.createElement("span",{className:"material-icons-outlined"},"delete_outline"))
+                      ? React.createElement(IconButton,{
+                          style:{color:UNUSED_GRAY},
+                          onClick:e=>handleMarkUsed(coupon.id,e)
+                        },
+                          React.createElement("span",{className:"material-icons-outlined"},"check_circle_outline")
+                        )
+                      : React.createElement(IconButton,{
+                          style:{color:"#177818"},
+                          onClick:e=>handleMarkUnused(coupon.id,e)
+                        },
+                          React.createElement("span",{className:"material-icons-outlined"},"check_circle")
+                        ),
+
+                    React.createElement(IconButton,{
+                      style:{color:UNUSED_GRAY},
+                      onClick:e=>handleDelete(coupon.id,e)
+                    },
+                      React.createElement("span",{className:"material-icons-outlined"},"delete_outline")
+                    )
+
                   )
 
                 )
+
               )
+
             )
+
           )
         );
       })
