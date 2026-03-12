@@ -396,12 +396,13 @@ React.createElement(Dialog, {
         justifyContent: "flex-end",
         gap: "8px",
         marginTop: 12,
-        marginRight: 16
+        marginRight: 16,
+		  marginBottom: 16
       }
     },
 		// WhatsApp Share button
       React.createElement(Button, {
-        variant: "outlined",
+        variant: "text",
         onClick: () => handleShareWhatsApp(selectedCoupon),
         style: {
           textTransform: "none",
